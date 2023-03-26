@@ -1,7 +1,7 @@
 import React, { FC } from "react";
 type CountProps = {
   title: string;
-  value: number;
+  value: string;
 };
 
 const CountBox: FC<CountProps> = ({ title, value }) => {

@@ -4,9 +4,11 @@ import {
   useContract,
   useMetamask,
   useContractWrite,
+  useDisconnect,
 } from "@thirdweb-dev/react";
-import { BigNumberish, ethers } from "ethers";
+import { BaseContract, BigNumberish, ethers } from "ethers";
 import useEffect from "react";
+import { SmartContract } from "@thirdweb-dev/sdk";
 
 type CampaignForm = {
   title: string;
@@ -18,12 +20,14 @@ type CampaignForm = {
 
 type StateContextProps = {
   address: string;
-  contract: ethers.Contract;
+  contract: (ethers.Contract | SmartContract<BaseContract>) | undefined;
   createCampaign: (form: CampaignForm) => Promise<void>;
-  getCampaigns: () => Promise<void>;
-  getUserCampaigns: () => Promise<void>;
+  getCampaigns: () => Promise<Campaign[]>;
+  getUserCampaigns: () => Promise<Campaign[]>;
   connect: () => void;
   disconnect: () => void;
+  donate: any;
+  getDonations: any;
 };
 
 interface Campaign {
@@ -39,15 +43,24 @@ interface Campaign {
 
 export const StateContext = createContext<StateContextProps>({
   address: "",
+  donate: "",
+  getDonations: "",
   contract: undefined,
-  createCampaign: null,
+  createCampaign: async () => {},
+  getCampaigns: async () => [],
+
+  getUserCampaigns: async () => [],
+  connect: () => {},
+  disconnect: () => {},
 });
 
 type StateContextProviderProps = {
   children: React.ReactNode;
 };
 
-export const StateContextProvider = ({ children }) => {
+export const StateContextProvider: React.FC<StateContextProviderProps> = ({
+  children,
+}) => {
   const { contract } = useContract(
     "0x16fC7230dD357d2485F461A52596Af7e62ea310E"
   );
@@ -56,7 +69,7 @@ export const StateContextProvider = ({ children }) => {
     "createCampaign"
   );
 
-  const address = useAddress();
+  const address = useAddress() || "";
   const connect = useMetamask();
 
   const publishCampaign = async (form: any) => {
@@ -76,7 +89,11 @@ export const StateContextProvider = ({ children }) => {
     }
   };
 
-  const getCampaigns = async (): Promise<void> => {
+  const getCampaigns = async (): Promise<Campaign[]> => {
+    if (!contract) {
+      console.error("Contract is not defined");
+      return [];
+    }
     const campaigns = await contract.call("getCampaigns");
     const parsedCampaigns: Campaign[] = campaigns.map(
       (campaign: any, i: any): Campaign => {
@@ -106,6 +123,10 @@ export const StateContextProvider = ({ children }) => {
   };
 
   const donate = async (pId: BigNumberish, amount: string) => {
+    if (!contract) {
+      console.error("Contract is not defined");
+      return;
+    }
     if (!amount || isNaN(parseFloat(amount))) {
       throw new Error("Invalid amount");
     }
@@ -116,6 +137,10 @@ export const StateContextProvider = ({ children }) => {
   };
 
   const getDonations = async (pId: string) => {
+    if (!contract) {
+      console.error("Contract is not defined");
+      return;
+    }
     const donations = await contract.call("getDonators", pId);
     const numberOfDonations = donations[0].length;
 
@@ -129,10 +154,11 @@ export const StateContextProvider = ({ children }) => {
       return parseDonations;
     }
   };
-
+  const disconnect = useDisconnect();
   return (
     <StateContext.Provider
       value={{
+        disconnect,
         address,
         contract,
         connect,

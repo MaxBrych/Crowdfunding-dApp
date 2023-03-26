@@ -13,7 +13,7 @@ export const daysLeft = (deadline: any) => {
   return remainingDays.toFixed(0);
 };
 
-export const calculateBarPercentage = ({ goal, raisedAmount }: props) => {
+export const calculateBarPercentage = (goal: number, raisedAmount: number) => {
   const percentage = Math.round((raisedAmount * 100) / goal);
 
   return percentage;

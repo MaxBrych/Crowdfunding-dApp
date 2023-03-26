@@ -4,7 +4,6 @@ import { ethers } from "ethers";
 import Image from "next/image";
 import { useStateContext } from "../../context";
 import { calculateBarPercentage, daysLeft } from "../../utils";
-import { thirdweb } from "../../../public/assets/thirdweb.svg";
 import Loader from "../../components/Loader";
 import CustomButton from "../../components/CustomButton";
 import Navbar from "../../components/Navbar";
@@ -25,6 +24,11 @@ interface CampaignProps {
 interface Donator {
   donator: string;
   donation: ethers.BigNumber;
+}
+
+interface CountProps {
+  title: string;
+  value: number;
 }
 
 const CampaignDetails: React.FC = () => {
@@ -75,7 +79,6 @@ const CampaignDetails: React.FC = () => {
   }
 
   const remainingDays = daysLeft(campaign.deadline);
-  console.log(donators);
 
   return (
     <div>
@@ -101,11 +104,16 @@ const CampaignDetails: React.FC = () => {
         ></div>
       </div>
       <CountBox title="Days Left" value={remainingDays} />
+      <CountBox title="Days Left" value={remainingDays.toString()} />{" "}
+      {/*change back to number when error occurs!! */}
       <CountBox
         title={`Raised of ${campaign.target}`}
-        value={campaign.amountCollected}
+        value={campaign.amountCollected.toString()}
       />
-      <CountBox title="Total Backers" value={donators ? donators.length : 0} />
+      <CountBox
+        title="Total Backers"
+        value={(donators ? donators.length : 0).toString()}
+      />
       <h1>{campaign.title}</h1>
       <p>{campaign.description}</p>
       <p>Target amount: {campaign.target}</p>
@@ -115,7 +123,7 @@ const CampaignDetails: React.FC = () => {
       </div>
       {/* display other campaign details */}
       <h2>Donators:</h2>
-      {donators > 0 ? (
+      {donators.length > 0 ? (
         donators.map((item) => (
           <p key={item.donator}>
             {item.donator}: {item.donation.toString()}

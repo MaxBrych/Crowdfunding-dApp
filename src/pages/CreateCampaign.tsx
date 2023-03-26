@@ -54,8 +54,6 @@ const CreateCampaign: NextPage = () => {
       } else alert("Provide a valid image url");
       setForm({ ...form, image: "" });
     });
-
-    console.log(form);
   };
 
   return (
