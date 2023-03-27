@@ -3,7 +3,7 @@ import React, { FC, MouseEvent } from "react";
 interface ButtonProps {
   btnType: "button" | "submit" | "reset";
   title: string;
-  handleClick: (event: MouseEvent<HTMLButtonElement>) => void;
+  handleClick?: (event: MouseEvent<HTMLButtonElement>) => void; // Make handleClick optional
   styles?: string;
 }
 

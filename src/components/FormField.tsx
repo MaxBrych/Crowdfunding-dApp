@@ -1,3 +1,4 @@
+import { ethers } from "ethers";
 import type { NextPage } from "next";
 import { ChangeEvent } from "react";
 type InputType =
@@ -8,12 +9,13 @@ type InputType =
   | "date"
   | "url"
   | "file";
+
 interface FormFieldProps {
   labelName?: string;
   placeholder?: string;
   inputType?: InputType;
   isTextArea?: boolean;
-  value: string | number;
+  value: string | number | ethers.BigNumber;
   handleChange: (
     event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => void;
@@ -27,8 +29,10 @@ const FormField: React.FC<FormFieldProps> = ({
   value,
   handleChange,
 }) => {
+  const valueString = typeof value === "object" ? value.toString() : value;
+
   return (
-    <label className="flex-1 w-full flex flex-col">
+    <label className="flex flex-col flex-1 w-full">
       {labelName && (
         <span className="font-epilogue font-medium text-[14px] leading-[22px] text-[#808191] mb-[10px]">
           {labelName}
@@ -37,7 +41,7 @@ const FormField: React.FC<FormFieldProps> = ({
       {isTextArea ? (
         <textarea
           required
-          value={value}
+          value={valueString}
           onChange={handleChange}
           rows={10}
           placeholder={placeholder}
@@ -46,7 +50,7 @@ const FormField: React.FC<FormFieldProps> = ({
       ) : (
         <input
           required
-          value={value}
+          value={valueString}
           onChange={handleChange}
           type={inputType}
           step="0.1"

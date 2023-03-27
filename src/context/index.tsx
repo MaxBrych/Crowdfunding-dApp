@@ -13,7 +13,7 @@ import { SmartContract } from "@thirdweb-dev/sdk";
 type CampaignForm = {
   title: string;
   description: string;
-  target: number;
+  target: ethers.BigNumber;
   deadline: string;
   image: string;
 };
@@ -34,7 +34,7 @@ interface Campaign {
   owner: string;
   title: string;
   description: string;
-  target: string;
+  target: ethers.BigNumber;
   deadline: number;
   amountCollected: string;
   image: string;
@@ -72,7 +72,7 @@ export const StateContextProvider: React.FC<StateContextProviderProps> = ({
   const address = useAddress() || "";
   const connect = useMetamask();
 
-  const publishCampaign = async (form: any) => {
+  const publishCampaign = async (form: CampaignForm) => {
     try {
       const data = await createCampaign([
         address, //owner
@@ -101,7 +101,7 @@ export const StateContextProvider: React.FC<StateContextProviderProps> = ({
           owner: campaign.owner,
           title: campaign.title,
           description: campaign.description,
-          target: ethers.utils.formatEther(campaign.target.toString()),
+          target: ethers.BigNumber.from(campaign.target.toString()),
           deadline: campaign.deadline.toNumber(),
           amountCollected: ethers.utils.formatEther(
             campaign.amountCollected.toString()
@@ -113,6 +113,7 @@ export const StateContextProvider: React.FC<StateContextProviderProps> = ({
     );
     return parsedCampaigns;
   };
+
   const getUserCampaigns = async () => {
     const allCampaigns = await getCampaigns();
 

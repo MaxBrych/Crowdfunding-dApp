@@ -15,7 +15,7 @@ interface FormState {
   name: string;
   title: string;
   description: string;
-  target: string;
+  target: ethers.BigNumber;
   deadline: string;
   image: string;
 }
@@ -27,7 +27,7 @@ const CreateCampaign: NextPage = () => {
     name: "",
     title: "",
     description: "",
-    target: "",
+    target: ethers.BigNumber.from(0),
     deadline: "",
     image: "",
   });
@@ -36,7 +36,22 @@ const CreateCampaign: NextPage = () => {
     fieldName: keyof FormState,
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
-    setForm({ ...form, [fieldName]: e.target.value });
+    if (fieldName === "target") {
+      const targetValue = e.target.value;
+      const isValidNumber =
+        !isNaN(parseFloat(targetValue)) && isFinite(parseFloat(targetValue));
+      if (isValidNumber || targetValue === "") {
+        setForm({
+          ...form,
+          [fieldName]:
+            targetValue === ""
+              ? ethers.BigNumber.from(0)
+              : ethers.BigNumber.from(targetValue),
+        });
+      }
+    } else {
+      setForm({ ...form, [fieldName]: e.target.value });
+    }
   };
 
   const handleSubmit = async (e: any) => {
@@ -47,8 +62,9 @@ const CreateCampaign: NextPage = () => {
         setIsLoading(true);
         await createCampaign({
           ...form,
-          target: ethers.utils.parseUnits(form.target, 18),
+          target: ethers.utils.parseUnits(form.target.toString(), 18),
         });
+
         setIsLoading(false);
         router.push("/");
       } else alert("Provide a valid image url");
@@ -108,7 +124,7 @@ const CreateCampaign: NextPage = () => {
           <FormField
             labelName="Goal *"
             placeholder="ETH 0.50"
-            inputType="text"
+            inputType="number"
             value={form.target}
             handleChange={(e) => handleFormFieldChange("target", e)}
           />
@@ -126,7 +142,7 @@ const CreateCampaign: NextPage = () => {
             value={form.image}
             handleChange={(e) => handleFormFieldChange("image", e)}
           />
-          <div className="flex justify-center items-center mt-10">
+          <div className="flex items-center justify-center mt-10">
             <CustomButton
               btnType="submit"
               title="Submit new campaign"
