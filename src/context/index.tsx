@@ -30,7 +30,7 @@ type StateContextProps = {
   getDonations: any;
 };
 
-interface Campaign {
+export interface Campaign {
   owner: string;
   title: string;
   description: string;

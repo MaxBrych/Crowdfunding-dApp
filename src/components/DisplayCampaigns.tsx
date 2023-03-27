@@ -4,17 +4,7 @@ import { useRouter } from "next/router";
 
 import FundCard from "./FundCard";
 import loader from "../../public/assets/loader.svg";
-//import CampaignDetails from "../pages/campaign-details/CampaignDetails";
-
-type Campaign = {
-  owner: string;
-  title: string;
-  description: string;
-  target: number;
-  deadline: string;
-  amountCollected: number;
-  image: string;
-};
+import { Campaign } from "../context"; // Import the Campaign type from context
 
 type Props = {
   title: string;

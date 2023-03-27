@@ -3,13 +3,13 @@ import type { NextPage } from "next";
 import { useEffect, useState } from "react";
 import Navbar from "../components/Navbar";
 import Sidebar from "../components/Sidebar";
-import { useStateContext } from "../context";
+import { Campaign, useStateContext } from "../context";
 import styles from "../styles/Home.module.css";
 import DisplayCampaigns from "../components/DisplayCampaigns";
 
 const Home: NextPage = () => {
   const [isLoading, setIsLoading] = useState(false);
-  const [campaigns, setCampaigns] = useState([]);
+  const [campaigns, setCampaigns] = useState<Campaign[]>([]);
 
   const { address, contract, getCampaigns } = useStateContext();
 
@@ -26,12 +26,12 @@ const Home: NextPage = () => {
 
   return (
     <div>
-      <main className="flex w-full min-h-screen bg-white text-black">
+      <main className="flex w-full min-h-screen text-black bg-white">
         {/* <div className="flex items-start justify-start ">
           <Sidebar />
   </div>*/}
         <div className="w-full">
-          <h1 className="mt-4 text-3xl">Crowdfunding dAPP</h1>
+          <h1 className="mt-4 text-3xl">Fund3</h1>
           <Navbar />
           <DisplayCampaigns
             title="Active Campaigns"

@@ -1,14 +1,15 @@
 import React from "react";
 import { daysLeft } from "../utils";
 import Image from "next/image";
+import { ethers } from "ethers";
 
 type FundCardProps = {
   owner: string;
   title: string;
   description: string;
-  target: number;
+  target: ethers.BigNumber;
   deadline: any;
-  amountCollected: number;
+  amountCollected: string;
   image: string;
   handleClick: () => void;
 };
@@ -64,10 +65,14 @@ const FundCard: React.FC<FundCardProps> = ({
         <div className="flex justify-between flex-wrap mt-[15px] gap-2">
           <div className="flex flex-col">
             <h4 className="font-epilogue font-semibold text-[14px]  leading-[22px]">
-              {amountCollected}
+              {ethers.utils.formatEther(
+                ethers.utils.parseEther(Number(amountCollected).toFixed(18))
+              )}{" "}
+              ETH
             </h4>
+
             <p className="mt-[3px] font-epilogue font-normal text-[12px] leading-[18px]  sm:max-w-[120px] truncate">
-              Raised of {target}
+              Raised of {ethers.utils.formatEther(target.toString())} ETH
             </p>
           </div>
           <div className="flex flex-col">
